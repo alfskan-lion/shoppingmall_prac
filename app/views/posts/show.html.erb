@@ -1,0 +1,53 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Tilte:</strong>
+  <%= @post.tilte %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @user.find(@post.user_id).email %>
+</p>
+
+<p>
+  <%= image_tag(@post.picture_url, :width => 600) if @post.picture.present? %>
+</p>
+
+<p>
+  <%= @post.content %>
+</p>
+
+<p>
+  <h5>댓글</h5>
+  <% @post.comments.each do |c| %>
+    <%= c.memo  %>
+    <%= @user.find(c.user_id).email  %>
+    <% if user_signed_in? %>
+      <% if c.user_id == current_user.id %>
+        <%= link_to "삭제하기", post_comment_path(c.post_id, c.id), method: 'DELETE' %>
+      <% end %>
+    <% else %>
+    <% end %>
+    <br>
+  <% end %>
+</p>
+
+<p>
+  <%= render 'form_comment', post: @post, comment: @comment %>
+</p>
+
+<% if user_signed_in? %>
+  <% if @post.user_id == current_user.id %>
+    <%= link_to 'Edit', edit_post_path(@post) %> |
+  <% end %>
+<% else %>
+<% end %>
+
+<%= link_to '조하요', toggle_like_path(@post.id) %>
+<%= @likes.size %> |
+<% @likes.each do |like| %>
+  <%= @user.find(like.user_id).email %><%= "," unless like == @likes.last %>
+<% end %>  
+<br>
+<%= link_to 'Back', posts_path %>
